@@ -1,0 +1,238 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathtools}
+\usepackage[pdf]{graphviz}
+
+%%% Helper code for Overleaf's build system to
+%%% automatically update output drawings when
+%%% code in a \digraph{...} is modified
+\usepackage{xpatch}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+\typeout{(#1)}
+\@addtofilelist{#1}
+\IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+\xpretocmd{\digraph}{\addFileDependency{#2.dot}}{}{}
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Теоретические модели вычислений \\
+        ДЗ №2}
+\author{А-13а-19 Сабитов Алексей}
+\begin{document}
+
+\maketitle
+
+\section{Для следующих языков постройте КС-грамматику}
+\subsection{$L = \{\omega \in \Sigma* |$  w содержит подстроку $aa\}$}
+ 
+$$ S \Rightarrow aS \:|\: bS \:|\: cS \:|\: aaT $$
+$$ T \Rightarrow aT \:|\: bT \:|\: cT \:|\: \lambda$$
+ 
+\subsection{$l = \{\omega \in \Sigma* |$  w не палиндром\}}
+$$S \Rightarrow aS(a|b|c)\; | \; bS(a|b|c)\; | \;cS(a|b|c) \; | \; aTb \; | \; aTc\; | \; bTa\; | \;bTc \; | \;cTa \; | \;cTb \; $$
+$$ T \Rightarrow \; a \; | \; b \; | \; c \; |\;aT \; | \; bT \; | \; cT \; | \; |\; \lambda$$
+\subsection{Алфавит: $\sum \{ \emptyset, N, `\{`,`\}`, \cup \} $ }
+Постройте грамматику для языка $L = \{\omega \in  \sum^*|\omega $ - синтактически корректная строка, обозначающая множество $\}$  \newline
+Грамматика: \newline
+$S \Rightarrow A\; | \;A\: u\: S \;|\; \{A\: u\: S\}$\newline
+$A \Rightarrow  B\; |\; \{\:\} \;|\; \{\:A\:\}\; |\; \{\:A,\:A\:\}$ \newline
+$B \Rightarrow  C\:,\:B \;|\;C$\newline
+$C \Rightarrow  N\:,\:O\;|\;O\:,\:N\;|\;N\;|\;O$\newline
+
+\section{упражнение}
+ 
+    В алфавите $\Omega = \{1, +, =\}$ мы можем записать выражения для суммы чисел $x + y = z$. Рассмотрим язык $A = \{1^m + 1^n = 1^{m+n} :\ | :\ m, n \in \mathbb{N}\}$
+ 
+    \subsection{Докажите, что язык $A$ регулярный (построением) или нерегулярный (через лемму о накачке)}
+ 
+        Будем доказывать, что язык нерегулярный:
+ 
+        \begin{itemize}
+            \item Фиксируем $n` = m + n + 2$
+            \item Возьмем $w = 1^m + 1^{n+1} = 1^{m+n+1}$
+            \item $|w| = 2(m + n) + 2 \geq n`$
+            \item Рассмотрим разбиение:
+ 
+            $x = \{1^m+\}$;    $y = \{1^{n+1}\}$
+ 
+            $|xy| = m + n + 1 \leq n`; \: |y| = n + 1 \geq 1$
+ 
+             $z = \{=1^{m+n+1}\}$
+ 
+            \item $\forall k \geq 0: xy^kz \in L$ - не выполняется, так как при $k = 0 \;or\; k \geq 2 \Rightarrow \newline \Rightarrow  1^m + 1^{k(n+1)} = 1^{m+n+1} \Rightarrow m + kn + k \neq m + n + 1$.  \newline Следовательно, язык нерегулярный.
+        \end{itemize}
+ 
+    \subsection{Постройте КС-грамматику для языка $A$, показывающую, что $A$ - контекстно-свободный}
+ 
+        \begin{itemize}
+            \item $S \Rightarrow += \: | \:+1=1 \: | \: 1+=1  \: | \: 1+1T11 \: | \: 1S1$
+ 
+            \item $T \Rightarrow = \: | \: 1T1 $
+        \end{itemize}
+        
+        \section{упражнение}
+ 
+    \subsection{С поводком}
+ 
+        Пусть $D_1 = \{\omega \in \Omega^* \: | \: \omega$ описывает последовательность ваших шагов и шагов вашей собаки на прогулке с поводком $\}$.
+ 
+        \begin{enumerate}
+            \item Докажите, что язык $D_1$ регулярный (построением) или нерегулярный (через лемму о накачке)
+ 
+            Построим ДКА, тем самым, покажем, что язык регулярный:
+            \begin{center}
+                \digraph{g}{
+                    size="6,6";
+                    rankdir="LR";
+                    node [shape=point]; 0;
+                    node [shape=circle]; 2 3 4 5;
+                    node [shape=doublecircle]; 1;
+                    0 -> 1;
+                    1 -> 2 [label="h"];
+                    2 -> 1 [label="d"];
+                    2 -> 3 [label="h"];
+                    3 -> 2 [label="d"];
+                    1 -> 4 [label="d"];
+                    4 -> 1 [label="h"];
+                    4 -> 5 [label="d"];
+                    5 -> 4 [label="h"];
+                }
+            \end{center}  
+ 
+            \item Постройте КС-грамматику для языка $D_1$, показывающую, что $D_1$ - контекстно-свободный
+ 
+                \begin{itemize}
+                    \item $S \to hT \: | \: dR \: | \: \lambda$
+ 
+                    \item $T \to hdT \: | \: dS$
+ 
+                    \item $R \to dhR \: | \: hS$
+                \end{itemize}
+ 
+ 
+        \end{enumerate}
+ 
+    \subsection{Без поводка}
+ 
+        Пусть $D_2 = \{\omega \in \Omega^* \: | \: \omega$ описывает последовательность ваших шагов и шагов вашей собаки на прогулке без поводка $\}$.
+ 
+        \begin{enumerate}
+            \item Докажите, что язык $D_2$ регулярный (построением) или нерегулярный (через лемму о накачке)
+ 
+            С помощью леммы о накачке покажем, что язык нерегулярный:
+            \begin{itemize}
+             
+            
+                \item Фиксируем $n`$
+                \item Берем $w = h^nd^n$
+                \item $|w| = 2n \geq n`$
+                \item Рассмотрим разбиение:
+ 
+                $x = h^i$
+ 
+                $y = h^j$
+ 
+                $|xy| = i + j = n; \: j > 0$
+ 
+                $z = h^{n-i-j}d^n$
+ 
+                \item $\forall k \geq 0: xy^kz \in L$ - не выполняется, так как при $k \geq 2\Rightarrow\newline \Rightarrow h^{i+kj+n-i-j}d^n \Rightarrow h^{n+j(k-1)}d^n$ \newlineЭто значит, что человек и собака не будут в одной точке.\newline Делаем вывод, что язык нерегулярный.
+            \end{itemize}
+ 
+            \item Постройте КС-грамматику для языка $D_2$, показывающую, что $D_2$ - контекстно-свободный
+ 
+                \begin{itemize}
+                    \item $S \to hSdS \: | \: dShS \: | \: \lambda$
+                \end{itemize}
+ 
+ 
+        \end{enumerate}
+        \section{упражнение}
+        \section{упражнение}
+\subsection{ Привести алгоритм построения НКА по праволинейной грамматике. Доказать, что с помощью алгоритма мы можем получить только слова из языка грамматики. Проиллюстрировать алгоритм на грамматике:}
+\newline
+    $A \Rightarrow aB\;|\;bC$
+ 
+    $B \Rightarrow aB\;|\;\lambda$
+ 
+    $C \Rightarrow A\;|\;aD\;|\;bC$
+ 
+    $D \Rightarrow aD\;|\;bD\;|\;\lambda$
+\newline
+{Алгоритм: }
+\begin{itemize}
+ \item {
+    Множество   вершин   НКА   состоит   из   нетерминалов грамматики  и,  возможно, еще  одной  новой  вершины F, которая объявляется заключительной.
+ }
+ \item {
+    Каждому  правилу  вида  A$\Rightarrow$aB  в  автомате  соответствует дуга  из  вершины А в  вершину В,  помеченная  символом а.  Каждому  правилу  вида  A$\Rightarrow$a  соответствует  дуга из  вершины А в  вершину F,  помеченная  символом а. Других дуг нет.
+ }
+ 
+ \item {
+ Начальной вершиной   автомата   является   вершина, соответствующая    начальному    символу    грамматики. Заключительными    являются новая вершина F, если  она использовалась на шаге 2, и каждая вершина A, такая что для нетерминала A в грамматике есть правило  $A \Rightarrow \lambda$
+ }
+ 
+\end{itemize}
+ 
+{Допустим, что наш алгоритм строит автомат, который допускает слова, которых нет в языке. Тогда существует  переход от одной нетерминальной вершины к другой, который не допускает язык.
+ 
+
+ 
+  Следовательно, есть переход переход от одной нетерминальной вершины к другой, который не допускает язык $\Rightarrow$ должно было быть соответствующее правило, но его нет.
+ 
+  Делаем вывод, что алгоритм допускает только слова из языка}
+ 
+ \digraph{51}{
+        size="6,6";
+        rankdir="LR";
+        node [shape=point]; 0;
+        node [shape=circle]; A C;
+        node [shape=doublecircle]; B D;
+        0 -> A;
+        A -> B [label="a"];
+        B -> B [label="a"];
+        A -> C [label="b"];
+        C -> A;
+        C -> D [label="a"];
+        D -> D [label="a|b"];
+    }
+ 
+\subsection{ Привести алгоритм построения КС грамматики по НКА. Доказать, что с помощью алгоритма мы можем получить только слова из языка НКА. Проиллюстрировать алгоритм на грамматике:}\newline
+{Алгоритм: }\newline
+\begin{itemize}
+ \item {
+    Нетерминалами  грамматики  будут  вершины  автомата, терминалами — пометки дуг
+ }
+ \item {
+    Для  каждой дуги  из  вершины А в  вершину В,  помеченная  символом а в грамматику  добавляется правило $A Rightarrow aB$. Для каждой заключительной вершины В в грамматику добавляется правило $B \Rightarrow \lambda$
+ }
+ 
+ \item {
+Начальным  символом  будет  нетерминал,  соответствующий начальной  вершине.
+ }
+ 
+\end{itemize}
+ 
+{Доказательство аналогично}
+ 
+$$ Q_0 \Rightarrow aQ_0 | aQ_1 | Q_3 $$
+$$ Q_1 \Rightarrow aQ_1 | aQ_2 | Q_2 | bQ_4 $$
+$$ Q_2 \Rightarrow aQ_2 | bQ_2 | aQ_5 | \lambda$$
+$$ Q_3 \Rightarrow bQ_0 | \lambda$$
+$$ Q_4 \Rightarrow Q_5 | \lambda$$
+$$ Q_5 \Rightarrow aQ_5 | bQ_2$$
+\end{document}
